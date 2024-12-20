@@ -1,0 +1,41 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: API
+
+# Triggers
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# A job has several Steps (Like building the code or deploying the code)
+jobs:
+  # Job Build
+  build:
+    # OS where will the code will run
+    runs-on: ubuntu-latest
+
+    # Steps are the "receipe"
+    steps:
+    # Checkout the code from the repo
+    - uses: actions/checkout@v4
+
+    # Then, get the .net for my runner
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    # Restore the nuget packages
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # Then, build the project but not restore the nugets (It already ran)
+    - name: Build
+      run: dotnet build --no-restore
+
+    # Test the code, in case the project has Unit Tests
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
