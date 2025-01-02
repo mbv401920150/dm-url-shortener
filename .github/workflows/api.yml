@@ -17,25 +17,53 @@ jobs:
     # OS where will the code will run
     runs-on: ubuntu-latest
 
-    # Steps are the "receipe"
+    # Steps are the "recipe"
     steps:
-    # Checkout the code from the repo
-    - uses: actions/checkout@v4
-
-    # Then, get the .net for my runner
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-
-    # Restore the nuget packages
-    - name: Restore dependencies
-      run: dotnet restore
-
-    # Then, build the project but not restore the nugets (It already ran)
-    - name: Build
-      run: dotnet build --no-restore
-
-    # Test the code, in case the project has Unit Tests
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      # Checkout the code from the repo
+      - uses: actions/checkout@v4
+  
+      # Then, get the .net for my runner
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+  
+      # Restore the nuget packages
+      - name: Restore dependencies
+        run: dotnet restore
+  
+      # Then, build the project but not restore the nugets (It already ran)
+      - name: Build
+        run: dotnet build --no-restore
+  
+      # Test the code, in case the project has Unit Tests
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+  
+      - name: dotnet publish
+        run: dotnet publish UrlShortener.Api -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifacts@v4
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+  
+  deploy-dev:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: Development
+    
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifacts@v4
+        with:
+          name: .net-app
+          
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with: 
+          app-name: ${{vars.API_RESOURCE_NAME}}
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+          package: .
