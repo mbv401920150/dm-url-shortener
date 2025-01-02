@@ -34,6 +34,9 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
       ]
     }
   }
+  identity: {
+    type: 'SystemAssigned'
+  }
 }
 
 resource webAppConfig 'Microsoft.Web/sites/config@2024-04-01' = {

@@ -1,7 +1,11 @@
 param keyVaultName string
 param principalIds array
 param principalType string = 'ServicePrincipal'
-param roleDefinitionId string = 'e181df14-00eb-4035-819b-3ca585545e2b' // Generated randomly
+// Run this command: 
+//   az role definition list --query "[].{RoleName:roleName, Id:id}" -o table
+// You will find all roles IDs that can be used.
+// This is the one that we need to use: 'Key Vault Secrets User' | 4633458b-17de-408a-b874-0445c86b69e6
+param roleDefinitionId string = '4633458b-17de-408a-b874-0445c86b69e6'
 
 // At that point it's expected that this keyVault is already existed
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
