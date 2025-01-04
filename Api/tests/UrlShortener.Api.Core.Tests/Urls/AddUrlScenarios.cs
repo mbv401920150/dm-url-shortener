@@ -21,11 +21,11 @@ public class AddUrlScenarios
         _handler = new AddUrlHandler(shortUrkGenerator, _urlDataStore, _timeProvider);
     }
     
-    private static AddUrlRequest CreateAddUrlRequest()
+    private static AddUrlRequest CreateAddUrlRequest(string createdBy = "admin")
     {
         var longUrl = new Uri("https://dometrain.com");
 
-        var request = new AddUrlRequest(longUrl, "admin");
+        var request = new AddUrlRequest(longUrl, createdBy);
         return request;
     }
 
@@ -36,8 +36,9 @@ public class AddUrlScenarios
         
         var response = await _handler.HandleAsync(request, default);
 
-        response.ShortUrl.Should().NotBeEmpty();
-        response.ShortUrl.Should().Be("1");
+        response.Succeeded.Should().BeTrue();
+        response.Value!.ShortUrl.Should().NotBeEmpty();
+        response.Value!.ShortUrl.Should().Be("1");
     }
 
     [Fact]
@@ -47,7 +48,8 @@ public class AddUrlScenarios
         
         var response = await _handler.HandleAsync(request, default);
 
-        _urlDataStore.Should().ContainKey(response.ShortUrl);
+        response.Succeeded.Should().BeTrue();
+        _urlDataStore.Should().ContainKey(response.Value!.ShortUrl);
     }
 
     [Fact]
@@ -57,9 +59,20 @@ public class AddUrlScenarios
         
         var response = await _handler.HandleAsync(request, default);
 
-        _urlDataStore.Should().ContainKey(response.ShortUrl);
-        _urlDataStore[response.ShortUrl].CreatedBy.Should().Be(request.CreatedBy);
-        _urlDataStore[response.ShortUrl].CreatedOn.Should().Be(_timeProvider.GetUtcNow());
+        response.Succeeded.Should().BeTrue();
+        _urlDataStore.Should().ContainKey(response.Value!.ShortUrl);
+        _urlDataStore[response.Value!.ShortUrl].CreatedBy.Should().Be(request.CreatedBy);
+        _urlDataStore[response.Value!.ShortUrl].CreatedOn.Should().Be(_timeProvider.GetUtcNow());
+    }
+
+    [Fact]
+    public async Task Should_return_error_if_created_by_is_empty()
+    {
+        var request = CreateAddUrlRequest(string.Empty);
+        var response = await _handler.HandleAsync(request, default);
+
+        response.Succeeded.Should().BeFalse();
+        response.Error.Code.Should().Be("missing_data");
     }
 }
 

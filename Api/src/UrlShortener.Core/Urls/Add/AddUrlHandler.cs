@@ -13,8 +13,13 @@ public class AddUrlHandler
         _timeProvider = timeProvider;
     }
 
-    public async Task<AddUrlResponse> HandleAsync(AddUrlRequest request, CancellationToken cancellationToken)
+    public async Task<Result<AddUrlResponse>> HandleAsync(AddUrlRequest request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrEmpty(request.CreatedBy))
+        {
+            return Errors.MissingCreatedBy;
+        }
+
         var shortened = new ShortenedUrl(
             request.LongUrl,
             _shortUrlGenerator.GenerateUniqueUrl(),
