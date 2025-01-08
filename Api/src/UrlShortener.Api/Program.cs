@@ -1,6 +1,7 @@
 using Azure.Identity;
 using UrlShortener.Api.Extensions;
 using UrlShortener.Core.Urls.Add;
+using UrlShortener.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,12 +17,17 @@ if (!string.IsNullOrEmpty(keyVaultName))
     );
 }
 
+var config = builder.Configuration;
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton(TimeProvider.System);
-builder.Services.AddUrlFeature();
+
+builder.Services
+    .AddUrlFeature()
+    .AddCosmosUrlDataStore(config);
 
 var app = builder.Build();
 

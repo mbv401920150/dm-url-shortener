@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using UrlShortener.Api;
+using UrlShortener.Core.Urls.Add;
+using UrlShortener.Tests.Extensions;
 
 namespace UrlShortener.Tests;
 
@@ -9,5 +14,16 @@ namespace UrlShortener.Tests;
 /// </summary>
 public class ApiFixture : WebApplicationFactory<IAssemblyMarker>
 {
-    
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureTestServices(
+            services =>
+            {
+                // Replace the Azure Implementation and use InMemory Data Source
+                services.Remove<IUrlDataStore>();
+                services.AddSingleton<IUrlDataStore>(new InMemoryUrlDataStore());
+            });
+        
+        base.ConfigureWebHost(builder);
+    }
 }
