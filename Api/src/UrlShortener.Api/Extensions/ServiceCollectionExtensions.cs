@@ -16,18 +16,10 @@ public static class ServiceCollectionExtensions
             return tokenProvider;
         });
         services.AddScoped<ShortUrlGenerator>();
-        services.AddSingleton<IUrlDataStore, InMemoryUrlDataStore>();
+        
+        // Will not be longer used. Instead of it will connect to Cosmos DB
+        // services.AddSingleton<IUrlDataStore, InMemoryUrlDataStore>();
         
         return services;
-    }
-}
-
-public class InMemoryUrlDataStore : Dictionary<string, ShortenedUrl>, IUrlDataStore
-{
-    public Task AddAsync(ShortenedUrl shortened, CancellationToken cancellationToken)
-    {
-        Add(shortened.ShortUrl, shortened);
-        
-        return Task.CompletedTask;
     }
 }
