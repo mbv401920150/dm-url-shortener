@@ -1,6 +1,8 @@
 ﻿# TEST LIST
 - Unique tokens
+  - Generating / assigning ranges.~~~~
 - Accept multiple Ranges
+  - Controlling the size of the range
 - _tokenRange on TokenProvider can be null when getting the token   
 
 # DONE
@@ -15,3 +17,6 @@
 - When adding a new url, should save it.
 - Who's the creator 
 - When was created.
+- Unique tokens
+  - Ensure token is incremented.
+  - Ensure not duplication.
