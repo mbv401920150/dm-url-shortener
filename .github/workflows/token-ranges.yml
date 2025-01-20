@@ -1,18 +1,18 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: API
+name: Token Ranges Service
 
 # Triggers
 on:
   push:
     branches: [ "main" ]
     paths:
-      - Api/**
+      - TokenRanges/**
   pull_request:
     branches: [ "main" ]
     paths:
-      - Api/**
+      - TokenRanges/**
 
 # A job has several Steps (Like building the code or deploying the code)
 jobs:
@@ -45,7 +45,7 @@ jobs:
         run: dotnet test --no-build --verbosity normal
   
       - name: dotnet publish
-        run: dotnet publish Api/src/UrlShortener.Api -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish TokenRanges/src/UrlShortener.TokenRangeService -c Release -o ${{env.DOTNET_ROOT}}/myapp
         
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -67,7 +67,7 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with: 
-          app-name: ${{vars.API_RESOURCE_NAME}}
+          app-name: ${{vars.TOKENRANGES_RESOURCE_NAME}}
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZURE_TOKENRANGES_PUBLISH_PROFILE }}
           package: .
