@@ -1,0 +1,11 @@
+﻿@Api_HostAddress = https://api-67vqx2skfuk4m.azurewebsites.net/
+
+POST {{Api_HostAddress}}/api/urls
+Accept: application/json
+Content-Type: application/json
+
+{
+  "LongUrl": "https://notion.com"
+}
+
+###

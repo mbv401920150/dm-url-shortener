@@ -1,4 +1,6 @@
-﻿param location string = resourceGroup().location
+﻿// az deployment group what-if --resource-group urlshortener-dev --template-file infrastructure/main.bicep
+
+param location string = resourceGroup().location
 var uniqueId = uniqueString(resourceGroup().id)
 
 module keyVault 'modules/secrets/keyvalut.bicep' = {
@@ -30,6 +32,16 @@ module apiService 'modules/compute/appservice.bicep' = {
   //     dependsOn: [
   //         keyVault
   //     ]
+}
+
+module tokenRangeService 'modules/compute/appservice.bicep' = {
+  name: 'tokenRangeServiceDevelopment'
+  params: {
+    appName: 'token-range-service-${uniqueId}'
+    appServicePlanName: 'plan-token-range-${uniqueId}'
+    location: location
+    keyVaultName: keyVault.outputs.name
+  }
 }
 
 module cosmosDb 'modules/storage/cosmos-db.bicep' = {
