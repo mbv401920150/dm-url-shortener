@@ -87,7 +87,7 @@ jobs:
           PGDATABASE: ranges # This is the name defined in the Bicep File to create the Postgre SQL Database
           PGUSER: ${{ secrets.PG_SQL_ADMINUSER }}
           PGPASSWORD: ${{ secrets.PG_SQL_PASSWORD }}
-        run: psql -f src/UrlShortener.TokenRangeService/TokenRangesTable.sql
+        run: psql -f TokenRanges/src/UrlShortener.TokenRangeService/TokenRangesTable.sql
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
