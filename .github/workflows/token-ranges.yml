@@ -52,6 +52,12 @@ jobs:
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
+
+      - name: Upload SQL artifact for DB deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: pg-script
+          path: TokenRanges/src/UrlShortener.TokenRangeService/TokenRangesTable.sql
   
   deploy-dev:
     runs-on: ubuntu-latest
@@ -63,6 +69,25 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
+
+      - name: Download DB artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: pg-script
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+    
+      # Those secrets can be grabbed from Azure > Postgre DB and saved Github per each environment
+      - name: Deploy Database Schema
+        env:
+          PGHOST: ${{ secrets.PG_SQL_HOST }}
+          PGDATABASE: ranges # This is the name defined in the Bicep File to create the Postgre SQL Database
+          PGUSER: ${{ secrets.PG_SQL_ADMINUSER }}
+          PGPASSWORD: ${{ secrets.PG_SQL_PASSWORD }}
+        run: psql -f TokenRangesTable.sql
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
