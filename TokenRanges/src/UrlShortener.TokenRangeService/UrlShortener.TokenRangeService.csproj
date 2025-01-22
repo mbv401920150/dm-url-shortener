@@ -16,4 +16,11 @@
         <PackageReference Include="Testcontainers.PostgreSql" Version="4.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="TokenRangesTable.sql" />
+      <Content Include="TokenRangesTable.sql">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
