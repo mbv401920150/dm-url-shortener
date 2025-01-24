@@ -8,13 +8,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddUrlFeature(this IServiceCollection services)
     {
         services.AddScoped<AddUrlHandler>();
-        services.AddSingleton<TokenProvider>(_ =>
-        {
-            var tokenProvider = new TokenProvider();
-            tokenProvider.AssignRange(1, 1000);
-            
-            return tokenProvider;
-        });
+        services.AddSingleton<TokenProvider>();
         services.AddScoped<ShortUrlGenerator>();
         
         // Will not be longer used. Instead of it will connect to Cosmos DB

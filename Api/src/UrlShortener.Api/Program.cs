@@ -29,6 +29,19 @@ builder.Services
     .AddUrlFeature()
     .AddCosmosUrlDataStore(config);
 
+
+builder.Services.AddHttpClient("TokenRangeService", client =>
+{
+    // Base Address will come from Azure - IaC Bicep file.
+    client.BaseAddress = new Uri(builder.Configuration["TokenRangeService:Endpoint"]!);
+});
+
+builder.Services
+    .AddSingleton<ITokenRangeApiClient, TokenRangeApiClient>()
+    .AddSingleton<IEnvironmentManager, EnvironmentManager>();
+
+builder.Services.AddHostedService<TokenManager>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
