@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using UrlShortener.Api;
 using UrlShortener.Core.Urls.Add;
 using UrlShortener.Tests.Extensions;
+using UrlShortener.Tests.TestDoubles;
 
 namespace UrlShortener.Tests;
 
@@ -22,6 +23,9 @@ public class ApiFixture : WebApplicationFactory<IAssemblyMarker>
                 // Replace the Azure Implementation and use InMemory Data Source
                 services.Remove<IUrlDataStore>();
                 services.AddSingleton<IUrlDataStore>(new InMemoryUrlDataStore());
+                
+                services.Remove<ITokenRangeApiClient>();
+                services.AddSingleton<ITokenRangeApiClient, FakeTokenRangeClient>();
             });
         
         base.ConfigureWebHost(builder);
